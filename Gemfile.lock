@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    merchant_galaxy_guide (0.1.0)
+    galaxy_businessman_guide (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -25,7 +25,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.11)
-  merchant_galaxy_guide!
+  galaxy_businessman_guide!
   minitest (~> 5.0)
   pry-byebug
   rake (~> 10.0)

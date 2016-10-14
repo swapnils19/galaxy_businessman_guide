@@ -29,12 +29,14 @@ module InputProcessor
   # Parameters -
   #   line_input: String
   def self.calculate_guide(line_input: '')
-    tokens =  line_input.strip.split(' is ')
+    tokens = line_input.strip.split(' is ')
     unless tokens[0].include?(' ')
       @token_values["#{tokens[0]}"] = "#{tokens[1]}"
     else
       if line_input.include?('?')
-        @merchants_guide << get_answer(question_tokens: tokens[1]) << "\n"
+        question_coins = ''
+        @coin_values.keys.any?{ |c| question_coins = c if tokens[0].include? c }
+        @merchants_guide << get_answer(question_tokens: tokens[1], question_coins: question_coins) << "\n"
       else
         set_coins(coin_tokens: tokens[0], value_tokens: tokens[1])
       end
@@ -69,7 +71,7 @@ module InputProcessor
   # This method will return the expected answer of the merchant's problem
   # Parameters - 
   #   question_tokens: String
-  def self.get_answer(question_tokens: '')
+  def self.get_answer(question_tokens: '', question_coins: '')
     answer = ''
     if question_tokens.nil?
       answer = 'I have no idea what you are talking about'
@@ -79,7 +81,15 @@ module InputProcessor
       dec_number = NumbersUtil.get_roman_number_value(roman_number: roman_number)
       coin = coins.gsub('?','').strip
       value = @coin_values.key?(coin) ? (@coin_values[coin] * dec_number).to_i : dec_number
-      answer << "#{value}"
+      new_value = 0
+      if question_coins.size > 0
+        question_coin = question_coins.gsub('?','').strip
+        new_value = value / (@coin_values.key?(question_coin) ? (@coin_values[question_coin]).to_i : 1)
+        answer.gsub!('is', '')
+        answer.prepend "#{new_value} #{question_coin} is "
+      else
+        answer << "#{value}"
+      end
     end
     answer
   end
